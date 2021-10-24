@@ -1,0 +1,38 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager /* Changed IdentityUser to ApplicationUser - Athar 03.04.2020*/
+@inject UserManager<ApplicationUser> UserManager /* Changed IdentityUser to ApplicationUser - Athar 03.04.2020*/
+
+@{ /*
+          @inject SignInManager<IdentityUser> SignInManager
+          @inject UserManager<IdentityUser> UserManager
+
+          To
+
+          @inject SignInManager<ApplicationUser> SignInManager
+          @inject UserManager<ApplicationUser> UserManager
+
+          - Athar 03.04.2020
+       */}
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User)) //28.02.20 - Kim: If the user is signed in then they have the option to view their profile or logout
+    {
+        <li class="nav-item">
+            <a class="nav-link text-white" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Profile</a>
+        </li>
+        <li class="nav-item">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="nav-link btn btn-link text-white">Logout</button>
+            </form>
+        </li>
+    }
+    else //28.02.20 - Kim: If the user is not logged in then they have the options to register or login
+    {
+        <li class="nav-item">
+            <a class="nav-link text-white" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-white" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </li>
+    }
+</ul>

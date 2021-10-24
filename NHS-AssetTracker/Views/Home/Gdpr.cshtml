@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<ApplicationUser> SignInManager /* Changed IdentityUser to ApplicationUser - Athar 03.04.2020*/
+@inject UserManager<ApplicationUser> UserManager /* Changed IdentityUser to ApplicationUser - Athar 03.04.2020*/
+@{
+    ViewData["Title"] = "Consent Form";
+}
+
+@if (SignInManager.IsSignedIn(User)) //23.03.20 - Kim: Ensuring the user is signed in
+{
+    //Basic container to have a link to a PDF consent form
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="mt-2 text-center">Patient Consent Form</h2>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                @*24.03.20 - Kim: link to the pdf so it can be downloaded*@
+                @*//24.03.20 - Kim: PDF embed - Link currently doesn't work as we don't have a pdf yet*@
+                @*01.04.30 - Kim: GDPR now accessible. Link works - can be viewed and downloaded*@
+                <iframe src="https://docs.google.com/document/d/1aYk_2_Nw-otjqzI8wFQFfUgwLGyQ68OAXndlPfj8BVQ/edit" width="1240" height="720"></iframe>
+                <hr>
+            </div>
+        </div>
+    </div>
+
+}
+

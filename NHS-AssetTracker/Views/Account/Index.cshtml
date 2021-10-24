@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+@{ /* Start - Following div is for testing the new layout and linking it to the database - Athar - 26.03.2020*/}
+<div style="position:absolute;top:100px;right:0px;">
+    <a asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+    <br />
+    <a asp-area="" asp-controller="Account" asp-action="Register">Register</a>
+    <br />
+    <a asp-area="" asp-controller="Account" asp-action="Profile">Profile</a>
+</div>
+@{ /* End - Athar - 26.03.2020*/}
+

@@ -1,0 +1,607 @@
+﻿@model IEnumerable<NHS_AssetTracker.Models.TrackModel>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager /* Changed IdentityUser to ApplicationUser - Athar 03.04.2020*/
+@inject UserManager<ApplicationUser> UserManager /* Changed IdentityUser to ApplicationUser - Athar 03.04.2020*/
+@{
+    ViewData["Title"] = "Track";
+    var d = @ViewData["error"];
+    string data = d.ToString();
+    var m = "Editing Asset Details:";
+    if (ViewData["jLoc"] == null) { ViewData["jLoc"] = ""; }
+    string jloc = ViewData["jLoc"].ToString();
+    if (ViewData["jpat"] == null) { ViewData["jpat"] = ""; }
+    string jpat = ViewData["jpat"].ToString();
+
+    string noData = ViewData["noData"].ToString();
+}
+
+@if (SignInManager.IsSignedIn(User) && noData == "0") //29.04.20 - Athar: Updated to prevent users manually loading a page and viewing content without being logged in
+{
+    // using the following code We can Edit An Asset
+    // It will show data related to an asset on track page
+    // Athar - 06.05.20
+    <script type="text/javascript" src="~/js/jquery.js"></script>
+    <div class="container" id="Page-Start">
+        <div class="row">
+            <div class="col-md-12">
+
+                @foreach (var item in Model)
+                {
+                    <a id="Delete-Asset-btn" href="#" class="btn btn-danger text-white">Delete Asset</a>
+                    break;
+                }
+                <h2 class="mt-2 text-center">Asset Edit Page</h2>
+                <hr>
+                <h4>
+
+
+
+
+                    @if (data == "")
+                    {
+                        @m.ToString();
+
+                    }
+                    else
+                    {
+                        @d.ToString();
+                    }
+
+                </h4>
+                <hr>
+                <div id="Map-Data">
+                    <div class="ro">
+                        <div class="col-md-6 float-left">
+                            <br>
+                            @{ if (data == "")
+                                {
+
+
+                                    @foreach (var item in Model)
+                                    {
+                                        <div id="details-asset">
+                                            <div class="process-cont">
+                                                <h5>Asset Name</h5>
+                                                <input type="text" name="AssetName" value="@Html.DisplayFor(modelItem => item.AssetType)" class="form-control" disabled="disabled" />
+                                                <div class="text-center btn-cont">
+                                                    <a href="#" class="btn btn-gray btn-cancel-name disabled">Cancel</a>
+                                                    <a href="#" class="btn btn-gray btn-edit-name">Edit</a>
+                                                    <a href="#" class="btn btn-gray btn-save-name disabled">Save</a>
+                                                </div>
+                                            </div>
+                                            <h5>Asset Number</h5>
+                                            <p>
+                                                <input type="text" name="AssetNumber" value="@Html.DisplayFor(modelItem => item.AssetID)" class="form-control" disabled="disabled" />
+                                            </p>
+
+                                            <h5>Asset Location Details</h5>
+
+                                            <div class="process-cont">
+                                                <label>Asset Location ID</label>
+                                                <select type="text" name="AssetHome" value="@Html.DisplayFor(modelItem => item.AssetHome)" class="form-control m-0" disabled="disabled">
+                                                    <option>@Html.DisplayFor(modelItem => item.AssetHome)</option>
+                                                </select>
+                                                <label>Asset Location Head</label>
+                                                <input type="text" id="LocationHead" name="LocationHead" value="@Html.DisplayFor(modelItem => item.LocationHead)" class="form-control" disabled="disabled" />
+                                                <label>Asset Location Name</label>
+                                                <input type="text" id="LocationName" name="LocationName" value="@Html.DisplayFor(modelItem => item.LocationName)" class="form-control" disabled="disabled" />
+                                                <label>Asset Location Post Code</label>
+                                                <input type="text" id="LocationPostCode" name="LocationPostCode" value="@Html.DisplayFor(modelItem => item.LocationPostCode)" class="form-control" disabled="disabled" />
+                                                <div class="text-center btn-cont">
+                                                    <a href="#" class="btn btn-gray btn-cancel-loc disabled">Cancel</a>
+                                                    <a href="#" class="btn btn-gray btn-edit-loc">Edit</a>
+                                                    <a href="#" class="btn btn-gray btn-save-loc disabled">Save</a>
+                                                </div>
+                                            </div>
+                                            <h5>Asset Patient Details</h5>
+
+                                            <div class="process-cont">
+                                                <label>Patient User ID</label>
+                                                <select type="text" name="PatientID" value="@Html.DisplayFor(modelItem => item.LocationID)" class="form-control m-0" disabled="disabled">
+                                                    <option>@Html.DisplayFor(modelItem => item.LocationID)</option>
+                                                </select>
+                                                <label>Patient Forename</label>
+                                                <input type="text" name="Forename" value="@Html.DisplayFor(modelItem => item.Forename)" class="form-control" disabled="disabled" />
+                                                <label>Patient Surname</label>
+                                                <input type="text" name="Surname" value="@Html.DisplayFor(modelItem => item.Surname)" class="form-control" disabled="disabled" />
+                                                <label>Patient Address</label>
+                                                <input type="text" name="Address" value="@Html.DisplayFor(modelItem => item.Address)" class="form-control" disabled="disabled" />
+                                                <label>Patient ContactNo</label>
+                                                <input type="text" name="ContactNo" value="@Html.DisplayFor(modelItem => item.ContactNo)" class="form-control" disabled="disabled" />
+                                                <label>Patient Carer ID</label>
+                                                <input type="text" name="CarerID" value="@Html.DisplayFor(modelItem => item.CarerID)" class="form-control" disabled="disabled" />
+                                                <div class="text-center btn-cont">
+                                                    <a href="#" class="btn btn-gray btn-cancel-pat disabled">Cancel</a>
+                                                    <a href="#" class="btn btn-gray btn-edit-pat">Edit</a>
+                                                    <a href="#" class="btn btn-gray btn-save-pat disabled">Save</a>
+                                                </div>
+                                            </div>
+                                            <h5>Patient Carer Details</h5>
+
+                                            <p>
+                                                <label>Patient User ID</label>
+                                                <input type="text" name="CarerID" value="@Html.DisplayFor(modelItem => item.CarerID)" class="form-control" disabled="disabled" />
+
+                                            </p>
+
+                                            <h5>Asset Value Details</h5>
+
+                                            <div class="process-cont">
+                                                <label>Asset Value</label>
+                                                <select type="text" name="AssetValue" value="@Html.DisplayFor(modelItem => item.AssetValue)" class="form-control m-0" disabled="disabled">
+                                                    <option>@Html.DisplayFor(modelItem => item.AssetValue)</option>
+                                                </select>
+                                                <div class="text-center btn-cont">
+                                                    <a href="#" class="btn btn-gray btn-cancel-val disabled">Cancel</a>
+                                                    <a href="#" class="btn btn-gray btn-edit-val">Edit</a>
+                                                    <a href="#" class="btn btn-gray btn-save-val disabled">Save</a>
+                                                </div>
+                                            </div>
+
+                                            <h5>Asset Usability Details</h5>
+
+                                            <div class="process-cont">
+                                                <label>Asset Usable</label>
+                                                <select type="text" name="AssetUsable" value="@Html.DisplayFor(modelItem => item.AssetUsable)" class="form-control m-0" disabled="disabled">
+                                                    <option value="0">Asset is not Usable</option>
+                                                    <option value="1">Asset is Usable</option>
+                                                </select>
+                                                <div class="text-center btn-cont">
+                                                    <a href="#" class="btn btn-gray btn-cancel-use disabled">Cancel</a>
+                                                    <a href="#" class="btn btn-gray btn-edit-use">Edit</a>
+                                                    <a href="#" class="btn btn-gray btn-save-use disabled">Save</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        //// using the following Javascript code We can interact Edit Asset Details, Delete an Asset etc.
+                                        //// It will show data related to an asset on track page
+                                        //// Athar - 06.05.20
+                                        <script>
+                                        $(document).ready(function () {
+                                            var a = "@Html.DisplayFor(modelItem => item.AssetID)";
+                                            var locList = JSON.parse('@Html.Raw(jloc)');
+                                            var patList = JSON.parse('@Html.Raw(jpat)');
+                                            var valList = JSON.parse('[{"value":"Low"},{"value":"moderate"},{"value":"high"}]');
+
+                                            var lid = "@Html.DisplayFor(modelItem => item.AssetHome)";
+                                            var pid = "@Html.DisplayFor(modelItem => item.PatientID)";
+                                            var pva = "@Html.DisplayFor(modelItem => item.AssetValue)";
+                                            var use = "@Html.DisplayFor(modelItem => item.AssetUsable)";
+
+                                            var start = '<select type="text" name="AssetHome" value="" class="form-control m-0" disabled="disabled">';
+                                            var mid = "<option value='Select'>Select</option>";
+
+                                            for (var i = 0; i < locList.length; i++) {
+                                                if (locList[i].locationID == lid) {
+                                                    mid += "<option value='" + locList[i].locationID + "' selected>" + locList[i].locationID + "</option>";
+                                                } else {
+                                                    mid += "<option value='" + locList[i].locationID + "'>" + locList[i].locationID + "</option>";
+                                                }
+                                            }
+                                            var end = "</select>";
+                                            $("select[name=AssetHome]").html(mid).removeAttr("value");
+                                            var mid = "<option value='Select'>Select</option>";
+                                            for (var i = 0; i < patList.length; i++) {
+                                                console.log(patList[i].patientID);
+                                                if (patList[i].patientID == pid) {
+                                                    mid += "<option value='" + patList[i].patientID + "' selected>" + patList[i].patientID + "</option>";
+                                                } else {
+                                                    mid += "<option value='" + patList[i].patientID + "'>" + patList[i].patientID + "</option>";
+                                                }
+                                            }
+                                            $("select[name=PatientID]").html(mid).removeAttr("value");
+                                            var mid = "";
+                                            for (var i = 0; i < valList.length; i++) {
+                                                console.log(pva);
+                                                console.log(valList[i].value);
+                                                if (valList[i].value.toLowerCase() == pva.toLowerCase()) {
+                                                    mid += "<option value='" + valList[i].value + "' selected>" + valList[i].value + "</option>";
+                                                } else {
+                                                    mid += "<option value='" + valList[i].value + "'>" + valList[i].value + "</option>";
+                                                }
+                                            }
+                                            $("select[name=AssetValue]").html(mid).removeAttr("value");
+
+                                            for (var i = 0; i < $("select[name=AssetUsable]").children().length; i++) {
+                                                var d = $("select[name=AssetUsable]").children()[i];
+                                                if (d.innerHTML == use) {
+                                                    d.selected = true;
+                                                }
+                                            }
+
+
+                                            $("select[name=AssetHome]").change(function () {
+                                                var d = $(this).val();
+                                                for (var i = 0; i < locList.length; i++) {
+                                                    if (locList[i].locationID == d) {
+                                                        $("input[name=LocationHead]").val(locList[i].locationHead);
+                                                        $("input[name=LocationName]").val(locList[i].locationName);
+                                                        $("input[name=LocationPostCode]").val(locList[i].locationPostCode);
+                                                    }
+                                                }
+                                            });
+
+                                            $("select[name=PatientID]").change(function () {
+                                                var d = $(this).val();
+                                                for (var i = 0; i < patList.length; i++) {
+                                                    if (patList[i].patientID == d) {
+                                                        $("input[name=Forename]").val(patList[i].forename);
+                                                        $("input[name=Surname]").val(patList[i].surname);
+                                                        $("input[name=Address]").val(patList[i].address);
+                                                        $("input[name=ContactNo]").val(patList[i].contactNoString);
+                                                        $("input[name=CarerID]").val(patList[i].carerID);
+                                                    }
+                                                }
+                                            });
+
+
+                                            function channel(edit,cancel,save,btn,ind,type) {
+                                                if (btn == "edit") {
+                                                    $(edit).addClass("disabled");
+                                                    $(cancel).removeClass("disabled");
+                                                    $(save).removeClass("disabled");
+                                                    for (var i = 0; i < ind.length; i++) {
+                                                        $(type + "[name=" + ind[i] + "]").removeAttr("disabled");
+                                                    }
+                                                }
+                                                if (btn == "cancel") {
+                                                    $(edit).removeClass("disabled");
+                                                    $(cancel).addClass("disabled");
+                                                    $(save).addClass("disabled");
+                                                    for (var i = 0; i < ind.length; i++) {
+                                                        $(type+"[name=" + ind[i] + "]").attr({ "disabled": "disabled"});
+                                                    }
+                                                }
+                                                if (btn == "save") {
+                                                    $(edit).removeClass("disabled");
+                                                    $(cancel).addClass("disabled");
+                                                    $(save).addClass("disabled");
+                                                    for (var i = 0; i < ind.length; i++) {
+                                                        $(type + "[name=" + ind[i] + "]").attr({ "disabled": "disabled" });
+                                                        alert(type + "[name=" + ind[i] + "]");
+                                                    }
+                                                }
+
+                                            }
+
+                                            $(".btn-edit-name").click(function (e) {
+                                                e.preventDefault();
+                                                var flow = ["AssetName"];
+                                                channel(".btn-edit-name", ".btn-cancel-name", ".btn-save-name","edit", flow,"input");
+                                            });
+
+                                            $(".btn-cancel-name").click(function (e) {
+                                                e.preventDefault();
+                                                var flow = ["AssetName"];
+                                                channel(".btn-edit-name", ".btn-cancel-name", ".btn-save-name", "cancel", flow, "input");
+                                            });
+
+                                            $(".btn-save-name").click(function (e) {
+                                                e.preventDefault();
+                                                var c = "AssetName";
+                                                var b = $("input[name=" + c + "]").val();
+                                                $.ajax({
+                                                    url:"/Edit/EditName/",
+                                                    type: "post",
+                                                    data: { assetID: a, assetType: b, f: "name" },
+                                                    success: function (data) {
+                                                        var obj = JSON.parse(data);
+                                                        if (obj[0].result == "0") {
+                                                            $("#AssetModal .modal-header").addClass("bg-danger").removeClass("bg-success");
+                                                            $("#AssetModal .modal-body").html("Error: " + obj[0].info);
+                                                        }
+                                                        else if (obj[0].result == "1") {
+                                                            $("#AssetModal .modal-header").addClass("bg-success").removeClass("bg-danger");
+                                                            $("#AssetModal .modal-body").html("Success: " + obj[0].info);
+                                                            var flow = ["AssetName"];
+                                                            channel(".btn-edit-name", ".btn-cancel-name", ".btn-save-name", "cancel", flow, "input");
+                                                        }
+                                                        $("#btnm").trigger("click");
+                                                    }
+                                                });
+                                            });
+
+                                            $(".btn-edit-loc").click(function (e) {
+                                                e.preventDefault();
+                                                var flow = ["AssetHome"];
+                                                channel(".btn-edit-loc", ".btn-cancel-loc", ".btn-save-loc", "edit", flow,"select");
+                                            });
+
+                                            $(".btn-cancel-loc").click(function (e) {
+                                                e.preventDefault();
+                                                var flow = ["AssetHome"];
+                                                channel(".btn-edit-loc", ".btn-cancel-loc", ".btn-save-loc", "cancel", flow, "select");
+                                            });
+
+                                            $(".btn-save-loc").click(function (e) {
+                                                e.preventDefault();
+                                                var c = "AssetHome";
+                                                var b = $("select[name=" + c + "]").val();
+                                                $.ajax({
+                                                    url: "/Edit/EditLoc/",
+                                                    type: "post",
+                                                    data: { assetID: a, locationID: b, f: "loc" },
+                                                    success: function (data) {
+                                                        var obj = JSON.parse(data);
+                                                        if (obj[0].result == "0") {
+                                                            $("#AssetModal .modal-header").addClass("bg-danger").removeClass("bg-success");
+                                                            $("#AssetModal .modal-body").html("Error: " + obj[0].info);
+                                                        }
+                                                        else if (obj[0].result == "1") {
+                                                            $("#AssetModal .modal-header").addClass("bg-success").removeClass("bg-danger");
+                                                            $("#AssetModal .modal-body").html("Success: " + obj[0].info);
+                                                            var flow = ["AssetHome"];
+                                                            channel(".btn-edit-loc", ".btn-cancel-loc", ".btn-save-loc", "cancel", flow, "select");
+                                                        }
+                                                        $("#btnm").trigger("click");
+                                                    }
+                                                });
+                                            });
+
+                                            $(".btn-edit-pat").click(function (e) {
+                                                e.preventDefault();
+                                                var flow = ["PatientID"];
+                                                channel(".btn-edit-pat", ".btn-cancel-pat", ".btn-save-pat", "edit", flow, "select");
+                                            });
+
+                                            $(".btn-cancel-pat").click(function (e) {
+                                                e.preventDefault();
+                                                var flow = ["PatientID"];
+                                                channel(".btn-edit-pat", ".btn-cancel-pat", ".btn-save-pat", "cancel", flow, "select");
+                                            });
+
+                                            $(".btn-save-pat").click(function (e) {
+                                                e.preventDefault();
+                                                var c = "PatientID";
+                                                var b = $("select[name=" + c + "]").val();
+                                                $.ajax({
+                                                    url: "/Edit/EditPat/",
+                                                    type: "post",
+                                                    data: { assetID: a, patientID: b, f: "pat" },
+                                                    success: function (data) {
+                                                        var obj = JSON.parse(data);
+                                                        if (obj[0].result == "0") {
+                                                            $("#AssetModal .modal-header").addClass("bg-danger").removeClass("bg-success");
+                                                            $("#AssetModal .modal-body").html("Error: " + obj[0].info);
+                                                        }
+                                                        else if (obj[0].result == "1") {
+                                                            $("#AssetModal .modal-header").addClass("bg-success").removeClass("bg-danger");
+                                                            $("#AssetModal .modal-body").html("Success: " + obj[0].info);
+                                                            var flow = ["PatientID"];
+                                                            channel(".btn-edit-pat", ".btn-cancel-pat", ".btn-save-pat", "cancel", flow, "select");
+                                                        }
+                                                        $("#btnm").trigger("click");
+                                                    }
+                                                });
+                                            });
+
+                                            $(".btn-edit-val").click(function (e) {
+                                                e.preventDefault();
+                                                var flow = ["AssetValue"];
+                                                channel(".btn-edit-val", ".btn-cancel-val", ".btn-save-val", "edit", flow, "select");
+                                            });
+
+                                            $(".btn-cancel-val").click(function (e) {
+                                                e.preventDefault();
+                                                var flow = ["AssetValue"];
+                                                channel(".btn-edit-val", ".btn-cancel-val", ".btn-save-val", "cancel", flow, "select");
+                                            });
+
+                                            $(".btn-save-val").click(function (e) {
+                                                e.preventDefault();
+                                                var c = "AssetValue";
+                                                var b = $("select[name=" + c + "]").val();
+                                                $.ajax({
+                                                    url: "/Edit/EditVal/",
+                                                    type: "post",
+                                                    data: { assetID: a, assetValue: b, f: "val" },
+                                                    success: function (data) {
+                                                        var obj = JSON.parse(data);
+                                                        if (obj[0].result == "0") {
+                                                            $("#AssetModal .modal-header").addClass("bg-danger").removeClass("bg-success");
+                                                            $("#AssetModal .modal-body").html("Error: " + obj[0].info);
+                                                        }
+                                                        else if (obj[0].result == "1") {
+                                                            $("#AssetModal .modal-header").addClass("bg-success").removeClass("bg-danger");
+                                                            $("#AssetModal .modal-body").html("Success: " + obj[0].info);
+                                                            var flow = ["AssetValue"];
+                                                            channel(".btn-edit-val", ".btn-cancel-val", ".btn-save-val", "cancel", flow, "select");
+                                                        }
+                                                        $("#btnm").trigger("click");
+                                                    }
+                                                });
+                                            });
+
+                                            $(".btn-edit-use").click(function (e) {
+                                                e.preventDefault();
+                                                var flow = ["AssetUsable"];
+                                                channel(".btn-edit-use", ".btn-cancel-use", ".btn-save-use", "edit", flow, "select");
+                                            });
+
+                                            $(".btn-cancel-use").click(function (e) {
+                                                e.preventDefault();
+                                                var flow = ["AssetUsable"];
+                                                channel(".btn-edit-use", ".btn-cancel-use", ".btn-save-use", "cancel", flow, "select");
+                                            });
+
+                                            $(".btn-save-use").click(function (e) {
+                                                e.preventDefault();
+                                                var c = "AssetUsable";
+                                                var b = $("select[name=" + c + "]").val();
+                                                $.ajax({
+                                                    url: "/Edit/EditUse/",
+                                                    type: "post",
+                                                    data: { assetID: a, AssetUsable: b, f: "use" },
+                                                    success: function (data) {
+                                                        var obj = JSON.parse(data);
+                                                        if (obj[0].result == "0") {
+                                                            $("#AssetModal .modal-header").addClass("bg-danger").removeClass("bg-success");
+                                                            $("#AssetModal .modal-body").html("Error: " + obj[0].info);
+                                                        }
+                                                        else if (obj[0].result == "1") {
+                                                            $("#AssetModal .modal-header").addClass("bg-success").removeClass("bg-danger");
+                                                            $("#AssetModal .modal-body").html("Success: " + obj[0].info);
+                                                            var flow = ["AssetUsable"];
+                                                            channel(".btn-edit-use", ".btn-cancel-use", ".btn-save-use", "cancel", flow, "select");
+                                                        }
+                                                        $("#btnm").trigger("click");
+                                                    }
+                                                });
+                                            });
+
+                                            $("#Delete-Asset-btn").click(function (e) {
+                                                e.preventDefault();
+                                                $("#btnd").trigger("click");
+                                                $("input[name=ConfirmBox]").val("");
+                                                $("#CN-Btn").attr({ "disabled": "disabled"});
+                                            });
+
+                                            $("input[name=ConfirmBox]").on("change keydown paste input",function () {
+                                                if ($(this).val().toLowerCase() == "confirm") {
+                                                    $("#CN-Btn").removeAttr("disabled");
+                                                }
+                                            });
+
+                                            $(".CN-Btn").click(function () {
+                                                if (a != "") {
+                                                    $.ajax({
+                                                        url: "/Edit/DeleteAsset/",
+                                                        type: "post",
+                                                        data: { assetID: a, f: "delete" },
+                                                        success: function (data) {
+                                                            console.log(data);
+                                                            var obj = JSON.parse(data);
+                                                            console.log(obj);
+                                                            if (obj[0].result == "0") {
+                                                                $("#AssetModal .modal-header").addClass("bg-danger").removeClass("bg-success");
+                                                                $("#AssetModal .modal-body").html(obj[0].info);
+                                                            }
+                                                            else if (obj[0].result == "1") {
+                                                                $("#AssetModal .modal-header").addClass("bg-success").removeClass("bg-danger");
+                                                                $("#AssetModal .modal-body").html("Success: " + obj[0].info);
+                                                                $("#Map-Data").addClass("hide");
+                                                                var url = window.location.href
+                                                                var arr = url.split("/");
+                                                                var result = arr[0] + "//" + arr[2] + "/Home/Assets/";
+                                                                $("#Delete-Asset-btn").addClass("hide");
+                                                                $("#Asset-Load").html('<h4>You will be redirected to Assets page shortly <span id="countdown">10</span> seconds</h4><script type="text/javascript">var seconds=10;function countdown(){(seconds-=1)<0?window.location="' + result + '":(document.getElementById("countdown").innerHTML=seconds,window.setTimeout("countdown()",1e3))}countdown();' + '<' + '/script>');
+
+                                                            }
+                                                            $("#btnm").trigger("click");
+                                                        }
+                                                    });
+                                                } else {
+                                                    $("#AssetModal .modal-header").addClass("bg-danger").removeClass("bg-success");
+                                                    $("#AssetModal .modal-body").html("Error: Asset delete failed. ");
+                                                    $("#btnm").trigger("click");
+                                                }
+                                            });
+                                        });
+                                        </script>
+                                    }
+                                }
+                            }
+                        </div>
+
+                        <div class="col-md-6 float-left">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d38780.35263465039!2d-2.1626406495319985!3d52.5918145990568!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487080d43225d7fd%3A0x526da09547380126!2sWolverhampton!5e0!3m2!1sen!2suk!4v1581620559939!5m2!1sen!2suk" width="@{Write("100%");}" height="450" frameborder="0" style="border:0;" allowfullscreen=""></iframe>
+                        </div>
+
+                    </div>
+
+                </div>
+                <button type="button" id="btnm" class="hide" data-toggle="modal" data-target="#AssetModal">
+                </button>
+                <div class="modal fade" id="AssetModal" tabindex="-1" role="dialog" aria-labelledby="AssetModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-white" id="AssetModalLabel">Asset edit information</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" id="btnd" class="hide" data-toggle="modal" data-target="#AssetModald">
+                </button>
+                <div class="modal fade" id="AssetModald" tabindex="-1" role="dialog" aria-labelledby="AssetModalLabeld" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger">
+                                <h5 class="modal-title text-white" id="AssetModalLabeld">Deleting an Asset</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <label>To confirm your choice, type confirm in the field.</label>
+                                <input type="text" name="ConfirmBox" value="" placeholder="Type confirm here" class="form-control" />
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" id="CN-Btn" class="btn btn-secondary CN-Btn" data-dismiss="modal" disabled="disabled">Confirm</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <style type="text/css">
+                    .hide {
+                        display: none;
+                    }
+
+                    #Delete-Asset-btn {
+                        float: right;
+                        margin-top: 10px;
+                    }
+
+                    #btnm {
+                        display: none;
+                        z-index: -10000;
+                    }
+
+                    .load-off {
+                        display: none;
+                    }
+
+                    .load-more-loading {
+                        width: 1.3rem;
+                        height: 1.3rem;
+                    }
+
+                    .process-cont {
+                        display: table;
+                        width: 100%;
+                        margin-bottom: 10px;
+                    }
+
+                        .process-cont > .btn-cont {
+                            margin-top: 10px;
+                        }
+
+                    .btn-cont {
+                        float: right;
+                    }
+
+                    .form-asset-select input, select {
+                        margin: 10px;
+                    }
+                </style>
+            </div>
+        </div>
+    </div>
+    <div id="Asset-Load"></div>
+
+}
+else
+{
+
+}
+

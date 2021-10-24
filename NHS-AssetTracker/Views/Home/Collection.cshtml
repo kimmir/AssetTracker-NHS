@@ -1,0 +1,31 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager /* Changed IdentityUser to ApplicationUser - Athar 03.04.2020*/
+@inject UserManager<ApplicationUser> UserManager /* Changed IdentityUser to ApplicationUser - Athar 03.04.2020*/
+
+@{
+    ViewData["Title"] = "Collection";
+}
+
+@if (SignInManager.IsSignedIn(User)) //29.02.20 - Kim: Updated to prevent users manually loading a page and viewing content without being logged in
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="mt-2 text-center">@ViewData["Title"]</h2>
+                <hr>
+                <br>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+            </div>
+        </div>
+    </div>
+}
+else
+{
+
+}
+
+
+

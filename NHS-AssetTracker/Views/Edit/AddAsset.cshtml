@@ -1,0 +1,171 @@
+﻿@model NHS_AssetTracker.Models.AssetModel
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager /* Changed IdentityUser to ApplicationUser - Athar 03.04.2020*/
+@inject UserManager<ApplicationUser> UserManager /* Changed IdentityUser to ApplicationUser - Athar 03.04.2020*/
+
+@{
+    ViewData["Title"] = "Add a new Asset";
+    if (ViewData["jLoc"] == null) { ViewData["jLoc"] = ""; }
+    string jloc = ViewData["jLoc"].ToString();
+}
+
+@if (SignInManager.IsSignedIn(User))
+{
+
+
+    //// using the following code We can Add An Asset
+    //// It will show data related to an asset on track page
+    //// Athar - 06.05.20
+
+
+    <script type="text/javascript" src="~/js/jquery.js"></script>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="mt-2 text-center">@ViewData["Title"]</h2>
+                <hr>
+                <br>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                <form id="Add">
+                    <div class="form-group">
+                        <label>Enter Asset ID</label>
+                        <input name="AssetID" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Enter Asset Type</label>
+                        <input name="AssetType" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Enter Asset Value</label>
+                        <select name="AssetValue" class="form-control">
+                            <option value="Select">Select</option>
+                            <option value="1">Low</option>
+                            <option value="2">Moderate</option>
+                            <option value="3">High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Enter Asset Usability</label>
+                        <select name="AssetUsable" class="form-control">
+                            <option value="Select">Select</option>
+                            <option value="0">Asset is Not Usable</option>
+                            <option value="1">Asset is Usable</option>
+                        </select>
+                    </div>
+
+                    <div class="process-cont">
+                        <label>Asset Location</label>
+                        <select type="text" name="AssetHome" value="" class="form-control m-0">
+                            <option value="Select">Select</option>
+                        </select>
+                        <label>Asset Location Head</label>
+                        <input type="text" id="LocationHead" name="LocationHead" value="" class="form-control" disabled="disabled" />
+                        <label>Asset Location Name</label>
+                        <input type="text" id="LocationName" name="LocationName" value="" class="form-control" disabled="disabled" />
+                        <label>Asset Location Post Code</label>
+                        <input type="text" id="LocationPostCode" name="LocationPostCode" value="" class="form-control" disabled="disabled" />
+                    </div>
+                    <div class="text-right">
+                        <input type="submit" id="btn-add" name="submit" class="btn btn-success" value="Add Asset" />
+                    </div>
+                </form>
+                <button type="button" id="btnm" class="hide" data-toggle="modal" data-target="#AssetModal">
+                </button>
+                <div class="modal fade" id="AssetModal" tabindex="-1" role="dialog" aria-labelledby="AssetModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-white" id="AssetModalLabel">Asset adding information</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+
+                        var locList = JSON.parse('@Html.Raw(jloc)');
+                        var mid = "";
+                        for (var i = 0; i < locList.length; i++) {
+                                mid += "<option value='" + locList[i].locationID + "'>" + locList[i].locationID + "</option>";
+                        }
+                        $("select[name=AssetHome]").append(mid);
+
+                        $("select[name=AssetHome]").change(function () {
+                            var d = $(this).val();
+                            for (var i = 0; i < locList.length; i++) {
+                                if (locList[i].locationID == d) {
+                                    $("input[name=LocationHead]").val(locList[i].locationHead);
+                                    $("input[name=LocationName]").val(locList[i].locationName);
+                                    $("input[name=LocationPostCode]").val(locList[i].locationPostCode);
+                                }
+                            }
+                        });
+
+                        $("#btn-add").click(function (e) {
+                            e.preventDefault();
+                            var a = $("input[name=AssetID]").val();
+                            var b = $("input[name=AssetType]").val();
+                            var c = $("select[name=AssetValue]").val();
+                            var d = $("select[name=AssetUsable]").val();
+                            var e = $("select[name=AssetHome]").val();
+
+                            $.ajax({
+                                url: "/Edit/AddAsset/",
+                                type: "post",
+                                data: { AssetID: a, AssetType: b, AssetValue: c, AssetUsableString:d, AssetHome: e, f: "add" },
+                                success: function (data) {
+                                    var obj = JSON.parse(data);
+                                    console.log(obj);
+                                    if (obj[0].result == "0") {
+                                        $("#AssetModal .modal-header").addClass("bg-danger").removeClass("bg-success");
+                                        $("#AssetModal .modal-body").html("<ul>" + obj[0].info+"</ul>");
+                                    }
+                                    else if (obj[0].result == "1") {
+                                        $("#AssetModal .modal-header").addClass("bg-success").removeClass("bg-danger");
+                                        $("#AssetModal .modal-body").html("<ul>" + obj[0].info + "</ul>");
+                                        $("#Add")[0].reset();
+                                    }
+                                    $("#btnm").trigger("click");
+                                }
+                            });
+                        });
+                    });
+                </script>
+                <style type="text/css">
+                    .hide{
+                        display:none;
+                    }
+                    #btnm {
+                        display: none;
+                        z-index: -10000;
+                    }
+
+                    #btn-add {
+                        float: right;
+                        margin-top: 10px;
+                    }
+                </style>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+    </div>
+}
+else
+{
+
+}
+
+
+

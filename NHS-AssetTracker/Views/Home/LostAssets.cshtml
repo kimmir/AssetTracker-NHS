@@ -1,0 +1,64 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager /* Changed IdentityUser to ApplicationUser - Athar 03.04.2020*/
+@inject UserManager<ApplicationUser> UserManager /* Changed IdentityUser to ApplicationUser - Athar 03.04.2020*/
+@{
+    ViewData["Title"] = "LostAssets";
+}
+
+@if (SignInManager.IsSignedIn(User)) //29.02.20 - Kim: Updated to prevent users manually loading a page and viewing content without being logged in
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="mt-2 text-center">@ViewData["Title"]</h2>
+                <hr>
+                <br>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                @{ /* 01.03.20 - Athar - Lost assets  */ }
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Item Code</th>
+                            <th scope="col">Item Name</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>01.03.20</td>
+                            <td>1</td>
+                            <td>Syringe</td>
+                            <td class="text-danger">Missing</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>02.03.20</td>
+                            <td>2</td>
+                            <td>Monitor</td>
+                            <td class="text-danger">Missing</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td>03.03.20</td>
+                            <td>3</td>
+                            <td>Scalpel</td>
+                            <td class="text-danger">Missing</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+
+}
+
+

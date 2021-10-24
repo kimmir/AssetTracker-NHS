@@ -1,0 +1,204 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager /* Changed IdentityUser to ApplicationUser - Athar 03.04.2020*/
+@inject UserManager<ApplicationUser> UserManager /* Changed IdentityUser to ApplicationUser - Athar 03.04.2020*/
+
+@{ /*
+   @inject SignInManager<IdentityUser> SignInManager
+   @inject UserManager<IdentityUser> UserManager
+
+   To
+
+   @inject SignInManager<ApplicationUser> SignInManager
+   @inject UserManager<ApplicationUser> UserManager
+
+   - Athar 03.04.2020
+*/}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css?v1.3" />
+
+    <!-- Start - Adding bootstrap css and some custome css for logo etc - Athar-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <style type="text/css">
+        .profile-image {
+            max-width: 25px;
+        }
+
+        .logo-image {
+            width: 80px;
+        }
+
+        .navbar {
+            border-bottom: 1px solid #d2d2d2;
+        }
+
+        #Select-Diff {
+            position: absolute;
+            top: 200px;
+            right: 0px;
+            /*background: #3aca73;*/
+            /*padding: 5px;*/
+            text-align: center;
+            color: white;
+            z-index: 10000;
+        }
+
+        .btn-gray {
+            color: #fff;
+            background-color: #748694;
+            border-color: #748694;
+        }
+
+            .btn-gray:hover {
+                background-color: #96a8b5;
+                border-color: #96a8b5;
+            }
+    </style>
+    <!-- End - Adding bootstrap css and some custome css for logo etc - Athar-->
+
+
+
+</head>
+<body>
+    <header>
+        @{ /* Start - Following div is for testing the new layout and linking it to the database - Athar - 26.03.2020*/}
+        @{ /*
+        <div style="position:absolute;top:100px;right:0px;">
+            <a asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+            <br />
+            <a asp-area="" asp-controller="Account" asp-action="Register">Register</a>
+            <br />
+            <a asp-area="" asp-controller="Account" asp-action="Profile">Profile</a>
+        </div>
+            */}
+        @{ /* End - Athar - 26.03.2020*/}
+
+        <div class="nav-full navbar-fixed-top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <nav class="navbar navbar-expand-lg border-bottom navbar-light bg-light1">
+                            <div class="container">
+                                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                                    <img src="~/images/nhs-logo.png" class="logo-image">
+                                </a>
+                                <button class="navbar-toggler bg-light" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                                        aria-expanded="false" aria-label="Toggle navigation">
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
+                                <div class="navbar-collapse collapse d-lg-inline-flex flex-lg-row-reverse">
+                                    <partial name="_LoginPartial" />
+                                    @if (SignInManager.IsSignedIn(User)) //28.02.20 - Kim: If the user is signed in then they can view content
+                                    {
+                                        <ul class="navbar-nav flex-grow-1">
+                                            <li class="nav-item">
+                                                <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Assets">Assets</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Collection">Collection</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="LostAssets">Missing Items</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Log">Item Log</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Gdpr">Consent Form</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="SignUp">SignUp</a>
+                                            </li>
+
+                                        </ul>
+                                    }
+                                </div>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <style type="text/css">
+            .nav-full {
+                background: #0071d1;
+                border-bottom: 5px solid #0071d1;
+            }
+
+            .bg-lite {
+                background: #f8f9fa;
+            }
+
+            .navbar {
+                border: none !important;
+            }
+
+            .nav-w {
+                color: #fff;
+            }
+
+            .nav-wi {
+                color: #fff !important;
+            }
+
+            .navbar-fixed-top {
+                top: 0;
+            }
+
+            .navbar-toggler-icon {
+                /*29.02.20 - Kim: Fixes the issue with the toggler icon not showing. Will eventually need to change this for a local image*/
+                background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255,255,255, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+            }
+        </style>
+
+    </header>
+    <div class="container">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+
+    <!-- Start - Original footer - Athar -->
+    <!-- <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2020 - NHS_AssetTracker - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer> -->
+    <!-- End - Original footer - Athar -->
+    <!-- Start - New footer - Athar -->
+    <footer class="border-top footer text-muted">
+        <div class="container text-center text-white">
+            &copy; 2020 - NHS Tracker
+        </div>
+    </footer>
+    <!-- End - New footer - Athar -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+
+    <!-- Start - footer style - Athar -->
+    <style>
+        footer {
+            background: #0071d1;
+            border-top: 5px solid #0071d1 !important;
+        }
+
+        .footer-copyright {
+            background: #484848;
+            color: #fff;
+        }
+    </style>
+    <!-- End - footer style - Athar -->
+</body>
+</html>

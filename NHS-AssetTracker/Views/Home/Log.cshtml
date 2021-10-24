@@ -1,0 +1,102 @@
+﻿@model IEnumerable<NHS_AssetTracker.Models.AssetLogModel>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@{
+    ViewData["Title"] = "Log";
+}
+
+@if (SignInManager.IsSignedIn(User)) //29.02.20 - Kim: Updated to prevent users manually loading a page and viewing content without being logged in
+{
+    //30.04.20 - Kim: Fixing the issue where the table and the navbar aren't spaced correctly
+    <style type="text/css">
+        .table-responsive {
+            padding-top: 25px;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <script type="text/javascript" src="~/js/jquery.js"></script>
+
+    //01.04.20 - Kim: Creating the initial search menu to filter through the asset logs
+    <div class="container" id="asset-page-cont">
+        <div class="row">
+            <div class="col-md-12">
+                <form class="form" method="get" id="SearchForm">
+                    <div class="form-group" id="Form-Cont-Asset-Search">
+                        <div class="asset-d1">
+                            <label><strong>Enter Asset ID/Staff ID :</strong></label>
+                        </div>
+                        <div class="asset-d2">
+                            <input type="text" asp- name="SearchText" id="SearchText" value="" class="form-control asset-input" placeholder="Search by Asset ID/Staff ID">
+                            <small class="text-danger hide sn-error" id="SearchTextError">Enter search word</small>
+                        </div>
+                        <div class="asset-d3">
+                            <label><strong>Select search type :</strong></label>
+                        </div>
+                        <div class="asset-d4">
+                            <select name="SearchType" id="searchType" class="asset-select form-control">
+                                <option value="">Select</option>
+                                <option value="0">Staff ID</option>
+                                <option value="1">Asset ID</option>
+                            </select>
+                            <small class="text-danger hide st-error" id="searchTypeError">Select search type and press search</small>
+                        </div>
+                        <div class="asset-d5">
+                            <input type="submit" name="search" id="SearchBTN" value="search" class="btn btn-gray">
+                        </div>
+                    </div>
+                </form>
+                <hr>
+            </div>
+
+        </div>
+    </div>
+
+    /*01.03.20 - Kim: Log table example to show client*/
+    /*30.04.20 - Kim: Changed design of page. Removed title. Change table design and made it responsive*/
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+
+                    <th scope="col">Time In</th>
+                    <th scope="col">Time Out</th>
+                    <th scope="col">Staff ID</th>
+                    <th scope="col">Assigned Asset ID</th>
+                    <th scope="col">Task ID</th>
+                    <th scope="col">Assigned Team</th>
+                    <th scope="col">Last Maintenance</th>
+                    <th scope="col">Next Maintenance</th>
+                    <th scope="col">Last Cleaning</th>
+                    <th scope="col">Next Cleaning</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model) //03.04.20 - Kim: Posting Asset Log details
+                {
+                    <tr>
+
+                        <td>@Html.DisplayFor(modelItem => item.TimeIn) </td>
+                        <td>@Html.DisplayFor(modelItem => item.TimeOut) </td>
+                        <td>@Html.DisplayFor(modelItem => item.AssignedStaffID) </td>
+                        <td>@Html.DisplayFor(modelItem => item.AssignedAssetID) </td>
+                        <td>@Html.DisplayFor(modelItem => item.ATaskID) </td>
+                        <td>@Html.DisplayFor(modelItem => item.AssignedTeam) </td>
+                        <td>@Html.DisplayFor(modelItem => item.LastMaintenence) </td>
+                        <td>@Html.DisplayFor(modelItem => item.NextMaintenence) </td>
+                        <td>@Html.DisplayFor(modelItem => item.LastCleaningDate) </td>
+                        <td>@Html.DisplayFor(modelItem => item.NextCleaningDate) </td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+else
+{
+
+}

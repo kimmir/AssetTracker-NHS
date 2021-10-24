@@ -1,0 +1,538 @@
+﻿@model IEnumerable<NHS_AssetTracker.Models.AssetModel>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager /* Changed IdentityUser to ApplicationUser - Athar 03.04.2020*/
+@inject UserManager<ApplicationUser> UserManager /* Changed IdentityUser to ApplicationUser - Athar 03.04.2020*/
+@{
+    ViewData["Title"] = "Assets";
+}
+
+@{
+    var st = ViewData["SearchType"];
+}
+
+@if (SignInManager.IsSignedIn(User)) //29.02.20 - Kim: Updated to prevent users manually loading a page and viewing content without being logged in
+{
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <script type="text/javascript" src="~/js/jquery.js"></script>
+
+    <div class="container" id="asset-page-cont">
+        <div class="row">
+            <div class="col-md-12">
+                <a id="Add-Asset-btn" href="/Edit/AddAsset" class="btn btn-success text-white">Add New Asset</a>
+                <h2 class="mt-2 text-center">Assets</h2>
+                <hr>
+            </div>
+            <div class="col-md-12">
+                <form class="form" method="get" id="SearchForm">
+                    <div class="form-group" id="Form-Cont-Asset-Search">
+                        <div class="asset-d1">
+                            <label><strong>Enter asset name/ID/location :</strong></label>
+                        </div>
+                        <div class="asset-d2">
+                            <input type="text" asp- name="SearchText" id="SearchText" value="" class="form-control asset-input" placeholder="search by name/ID/location">
+                            <small class="text-danger hide sn-error" id="SearchTextError">Enter search word</small>
+                        </div>
+                        <div class="asset-d3">
+                            <label><strong>Select search type :</strong></label>
+                        </div>
+                        <div class="asset-d4">
+                            <select name="SearchType" id="searchType" class="asset-select form-control">
+                                <option value="">Select</option>
+                                <option value="0">Name</option>
+                                <option value="1">Asset ID</option>
+                                <option value="2">Location</option>
+                            </select>
+                            <small class="text-danger hide st-error" id="searchTypeError">Select search type and press search</small>
+                        </div>
+                        <div class="asset-d5">
+                            <input type="submit" name="search" id="SearchBTN" value="search" class="btn btn-gray">
+                        </div>
+                    </div>
+                </form>
+                <hr>
+            </div>
+            <div class="col-md-3">
+                <h5 class="bor-bot-c1">Filters <a href="#" id="filter-apply-btn" class="float-right">Apply filter</a></h5>
+                <div id="Filter-Data">
+                    <form>
+                        <h6 class="toggle-filter" target="hops-cont"><span class="fas fa-caret-down fa-ico"></span>Hospital</h6>
+                        <div id="hops-cont" style="display: none;">
+                            <ul class="ln">
+                                <li>
+                                    <input type="checkbox" name="dept1">
+                                    <label>Birmingham</label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="dept1">
+                                    <label>Walsall</label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="dept1">
+                                    <label>Wolverhampton</label>
+                                </li>
+                            </ul>
+                        </div>
+                        <h6 class="toggle-filter" target="dept-cont"><span class="fas fa-caret-down fa-ico"></span>Department</h6>
+                        <div id="dept-cont" style="display: none;">
+                            <ul class="ln">
+                                <li>
+                                    <input type="checkbox" name="dept1">
+                                    <label>Heart & Lungs</label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="dept1">
+                                    <label>A & E</label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="dept1">
+                                    <label>Cardiology</label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="dept1">
+                                    <label>Cardiology</label>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <h6 class="toggle-filter" target="team-cont"><span class="fas fa-caret-down fa-ico"></span>Team</h6>
+                        <div id="team-cont" style="display: none;">
+                            <ul class="ln">
+                                <li>
+                                    <input type="checkbox" name="dept1">
+                                    <label>01</label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="dept1">
+                                    <label>02</label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="dept1">
+                                    <label>03</label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="dept1">
+                                    <label>04</label>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <h6 class="toggle-filter" target="equip-cont"><span class="fas fa-caret-down fa-ico"></span>Equipment Type</h6>
+                        <div id="equip-cont" style="display: none;">
+                            <ul class="ln">
+                                <li>
+                                    <input type="checkbox" name="dept1">
+                                    <label>Syring</label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="dept1">
+                                    <label>Defibrillator</label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="dept1">
+                                    <label>Monitors</label>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <br>
+
+                        <div class="text-center">
+                            <a href="#" id="fiter-update-btn" class="btn btn-gray">Update result</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <h5 class="text-center bor-bot-c1">Results</h5>
+
+                <div class="result-ret">
+
+                    @foreach (var item in Model) //24.03.20 - Kim: Dynamically producing results
+                    {
+                        @*25.03.20 - Kim: Need to limit results to e.g. 10 per page - Then have numbers on the bottom to go through pages
+                            Would probably be something along the lines of getting Model.Length and determining how many pages will be needed
+                            Could then change results by multipling page number by 10 - E.g. page 1 would be 1 * 10 - 1 = 0-9 in list*@
+
+
+                        <div id="Result-Data">
+                            <div class="Asset-cont">
+                                <div class="text-center btn-cont">
+                                    @{ /*href = "EditAsset/?AssetID=@Html.DisplayFor(modelItem => item.AssetID)" */}
+                                    <a href = "/Home/EditAsset/?AssetID=@Html.DisplayFor(modelItem => item.AssetID)"  class="btn btn-gray">Edit</a>
+                                    <a href="/Home/Track/?AssetID=@Html.DisplayFor(modelItem => item.AssetID)" class="btn btn-gray">Track</a> @*25.03.20 - Kim: Would need to pass ID into here*@
+                                </div>
+                                <h5 class="Link-result">
+
+                                    @Html.DisplayFor(modelItem => item.AssetType)
+                                    @*25.03.20 - Kim: Can use the asset ID so individual items can be identified - Button with some sort of script that filters by ID - Would probably be some form of controller function *@
+                                </h5>
+                                @*Added Location Name - Athar - 29.04.20*@
+                                <p class="Location-result"><strong>@Html.DisplayFor(modelItem => item.AssetLocationName)</strong></p>
+
+                                <p>The A&E Department has issued this equipment.</p>
+
+                                <p>
+                                    @* Added asset Patient Name details on asset page - Athar 29.04.20 *@
+                                    <label><strong>Patient Name:</strong><br><span>
+                                        @{ 
+                                            int Assetuser = item.AssetUser;
+                                        }
+                                        @if (Assetuser == 0) {
+                                            @Html.Raw("N/A");
+                                        }
+                                        else
+                                        {
+                                        @Html.DisplayFor(modelItem => item.PatientName)
+                                        }
+                                         </span></label>
+
+                                    @* Added asset id details on asset page - Athar 29.04.20 *@
+                                    <label class="ml-2"><strong>Asset ID:</strong><br><span>@Html.DisplayFor(modelItem => item.AssetID)</span></label>
+
+                                    @* updated asset value details on asset page - Athar 29.04.20 *@
+                                    <label class="ml-2"><strong>Asset Value</strong><br><span>@Html.DisplayFor(modelItem => item.AssetValue)</span></label>
+
+                                    @* updated asset usable details on asset page - Athar 29.04.20 *@
+                                    <label class="ml-2"><strong>Asset Usable</strong><br><span>@Html.DisplayFor(modelItem => item.AssetUsableString)</span></label>
+
+                                    @* updated asset Last Cleaned details on asset page - Athar 29.04.20 *@
+                                    <label class="ml-2"><strong>Asset Last Cleaned</strong><br><span>@Html.DisplayFor(modelItem => item.AssetLastCleaned)</span></label>
+                                </p>
+
+
+                            </div>
+                        </div>
+
+
+                    }
+                </div>
+
+                <div class="load-more">
+                    <div class="text-center">
+                        <a href="#" id="Load-More-Btn">Load more</a>
+                        <div class="spinner-border load-more-loading load-off" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <style type="text/css">
+        #Add-Asset-btn {
+            float: right;
+            margin-top: 10px;
+        }
+        .btn-gray {
+            color: #fff;
+            background-color: #748694;
+            border-color: #748694;
+        }
+
+            .btn-gray:hover {
+                background-color: #96a8b5;
+                border-color: #96a8b5;
+            }
+
+        .Asset-cont {
+            border-bottom: 1px solid gray;
+        }
+
+        #Filter-Data h6 {
+            cursor: pointer;
+        }
+
+        .fa-ico {
+            margin-right: 10px;
+        }
+
+        .ln {
+            list-style: none;
+            padding: 0px;
+        }
+
+        #Filter-Data {
+            background: #f8f9fa;
+            padding: 5px;
+            border-radius: 5px;
+            padding-left: 10px;
+        }
+
+        #Result-Data {
+            background: #f8f9fa;
+            padding: 5px;
+            border-radius: 5px;
+            padding-left: 10px;
+        }
+
+        .Link-result {
+            margin-bottom: 0px;
+        }
+
+        .Location-result {
+            margin-top: 0px;
+        }
+
+        .Track-btn {
+            float: right;
+        }
+
+        .btn-cont {
+            float: right;
+        }
+
+        .Link-result {
+            color: #0071d1;
+        }
+
+        #asset-page-cont {
+            margin-bottom: 80px;
+        }
+
+        .bor-bot-c1 {
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        #filter-apply-btn {
+            font-size: 16px;
+        }
+
+        .asset-input {
+        }
+
+        .asset-select {
+        }
+
+        .asset-d1 {
+            float: left;
+            vertical-align: middle;
+            height: 36px;
+            line-height: 36px;
+        }
+
+        .asset-d2 {
+            float: left;
+            margin-left: 10px;
+            width: 270px;
+        }
+
+        .asset-d3 {
+            float: left;
+            margin-left: 10px;
+            vertical-align: middle;
+            height: 36px;
+            line-height: 36px;
+        }
+
+        .asset-d4 {
+            float: left;
+            margin-left: 10px;
+            width: 270px;
+        }
+
+        .asset-d5 {
+            margin-left: 10px;
+            float: left;
+        }
+
+        #Form-Cont-Asset-Search {
+            display: table;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        .load-off {
+            display: none;
+        }
+
+        .load-more > div {
+            padding: 10px;
+        }
+
+        .load-more-loading {
+            width: 1.3rem;
+            height: 1.3rem;
+        }
+        .hide{display:none;} @* Hiding Search errors - Athar 30.04.20*@
+        .btn-cont>.btn{margin:5px;} @* Fixing Edit Track btn spacing - Athar 30.04.20*@
+    </style>
+    
+        //// using the following Javascript code We can interact with Search bar and load new assets
+        //// It will show data related to an asset on track page
+        //// Athar - 06.05.20
+    
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+
+
+            $("#SearchBTN").click(function (e) {
+                var fls = false;
+                var cn = 0;
+                var sn = $("#SearchText").val();
+                var st = $("#searchType").val();
+                e.preventDefault();
+                if (sn != "" && st != "") {
+                    $.ajax({
+                        type: "POST",
+                        data: { SearchText: sn, SearchType: st, search: 'submit' },
+                        success: function (data) {
+                            var obj = JSON.parse(data);
+                            $(".result-ret").html("");
+                            if (data == "0") {
+                                $(".result-ret").html("<h3 class='text-center'>No result found</h3>");
+                                $("#Load-More-Btn").addClass("hide");
+                            } else {
+                                if (obj[0].result == "1") {
+                                    for (var i = 0; i < obj.length; i++) {
+                                        if (obj[i].assetUser == 0) {
+                                            var res = '<div id="Result-Data"><div class="Asset-cont"><div class="text-center btn-cont"><a href="EditAsset/?AssetID=' + obj[i].assetID + '" class="btn btn-gray">Edit</a><a href="Track/?AssetID=' + obj[i].assetID + '" class="btn btn-gray">Track</a></div><h5 class="Link-result">' + obj[i].assetType + '</h5><p class="Location-result"><strong>' + obj[i].assetLocationName + '</strong></p><p>The A&amp;E Department has issued this equipment.</p><p><label><strong>Patient Name:</strong><br><span>N/A</span></label><label class="ml-2"><strong>Asset ID:</strong><br><span>' + obj[i].assetID + '</span></label><label class="ml-2"><strong>Asset Value</strong><br><span>' + obj[i].assetValue + '</span></label><label class="ml-2"><strong>Asset Usable</strong><br><span>' + obj[i].assetUsableString + '</span></label><label class="ml-2"><strong>Asset Last Cleaned</strong><br><span>' + obj[i].assetLastCleaned + '</span></label></p></div></div>';
+                                        }
+                                        else {
+                                            var res = '<div id="Result-Data"><div class="Asset-cont"><div class="text-center btn-cont"><a href="EditAsset/?AssetID=' + obj[i].assetID + '" class="btn btn-gray">Edit</a><a href="Track/?AssetID=' + obj[i].assetID + '" class="btn btn-gray">Track</a></div><h5 class="Link-result">' + obj[i].assetType + '</h5><p class="Location-result"><strong>' + obj[i].assetLocationName + '</strong></p><p>The A&amp;E Department has issued this equipment.</p><p><label><strong>Patient Name:</strong><br><span>' + obj[i].forename + ", " + obj[i].surname + '</span></label><label class="ml-2"><strong>Asset ID:</strong><br><span>' + obj[i].assetID + '</span></label><label class="ml-2"><strong>Asset Value</strong><br><span>' + obj[i].assetValue + '</span></label><label class="ml-2"><strong>Asset Usable</strong><br><span>' + obj[i].assetUsableString + '</span></label><label class="ml-2"><strong>Asset Last Cleaned</strong><br><span>' + obj[i].assetLastCleaned + '</span></label></p></div></div>';
+                                        }
+                                        $(".result-ret").append(res);
+                                        $("#Load-More-Btn").removeClass("hide");
+
+                                    }
+                                } else {
+                                    $(".result-ret").html("<h3 class='text-center'>No result found</h3>");
+                                    $("#Load-More-Btn").addClass("hide");
+                                }
+                            }
+
+                        }
+                    });
+
+
+                } else {
+                    e.preventDefault();
+                    if (sn == "") {
+                        $("#SearchTextError").removeClass("hide");
+
+                    } else {
+                        $("#SearchTextError").addClass("hide");
+                    }
+
+                    if (st == "") {
+                        $("#searchTypeError").removeClass("hide");
+
+                    } else {
+                        $("#searchTypeError").addClass("hide");
+                    }
+
+                }
+
+
+            });
+
+            $("#searchType").change(function () {
+                if ($("#searchType").val() == "") {
+                    $("#searchTypeError").removeClass("hide");
+                } else {
+                    $("#searchTypeError").addClass("hide");
+                }
+            });
+
+            $("#SearchText").change(function () {
+                if ($("#SearchText").val() == "") {
+                    $("#SearchTextError").removeClass("hide");
+                } else {
+                    $("#SearchTextError").addClass("hide");
+                }
+            });
+
+            $("#Filter-Data h6").click(function () {
+                var d = $(this).attr("target");
+                $("#" + d).toggle();
+                if ($(this).children("span").hasClass("fa-caret-down")) {
+                    $(this).children("span").removeClass("fa-caret-down").addClass("fa-caret-up");
+                } else {
+                    $(this).children("span").removeClass("fa-caret-up").addClass("fa-caret-down");
+                }
+            });
+            $("#Filter-Data label").click(function () {
+                if ($(this).siblings().is(":checked")) {
+                    $(this).siblings().prop("checked", false);
+                } else {
+                    $(this).siblings().prop("checked", true);
+                }
+
+            });
+
+            $("#Load-More-Btn, #filter-apply-btn, #fiter-update-btn").click(function (e) {
+                e.preventDefault();
+                //alert("Load More button is under construction");
+                $("#AssetModal .modal-header").addClass("bg-danger");
+                $("#AssetModal .modal-body").html("Information: The Load More Button, Apply Filter and Update Result Button is under construction.");
+                $("#btnm").trigger("click");
+                /*var d = $(".load-more-loading").hasClass("load-off");
+                if (d) {
+                    $(".load-more-loading").removeClass("load-off").addClass("load-on");
+                    $(this).css({ "display": "none" });
+                } else {
+                    $(".load-more-loading").removeClass("load-on").addClass("load-off");
+                }*/
+            });
+        });
+    </script>
+    <button type="button" id="btnm" class="hide" data-toggle="modal" data-target="#AssetModal">
+    </button>
+    <div class="modal fade" id="AssetModal" tabindex="-1" role="dialog" aria-labelledby="AssetModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-white" id="AssetModalLabel">Asset edit information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+        else
+        {
+
+        }
+
+@*<p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Type)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Type)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>*@

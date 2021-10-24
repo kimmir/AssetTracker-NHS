@@ -1,0 +1,154 @@
+﻿@model IEnumerable<NHS_AssetTracker.Models.TrackModel>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager /* Changed IdentityUser to ApplicationUser - Athar 03.04.2020*/
+@inject UserManager<ApplicationUser> UserManager /* Changed IdentityUser to ApplicationUser - Athar 03.04.2020*/
+@{
+    ViewData["Title"] = "Track";
+    var d = @ViewData["error"];
+    string data = d.ToString();
+    var m = "Viewing Asset Details:";
+}
+
+@if (SignInManager.IsSignedIn(User)) //29.04.20 - Athar: Updated to prevent users manually loading a page and viewing content without being logged in
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                @foreach (var item in Model)
+                {   
+                    <a id="Edit-Asset-btn" href="../EditAsset/?AssetID=@Html.DisplayFor(modelItem => item.AssetID)" class="btn btn-primary text-white">Edit Asset</a>
+                    break;
+                }
+
+                <h2 class="mt-2 text-center">Track</h2>
+                <hr>
+                <h4>
+
+
+
+
+                    @if (data == "")
+                    {
+                        @m.ToString();
+
+                        @foreach (var item in Model)
+                        {
+                            @Html.DisplayFor(modelItem => item.AssetType)
+                        }
+
+                    }
+                    else
+                    {
+                        @d.ToString();
+                    }
+
+                </h4>
+                <hr>
+                <div id="Map-Data">
+                    <div class="ro">
+                        <div class="col-md-6 float-left">
+                            <br>
+                            @{ if (data == "")
+                                {
+
+                                    @foreach (var item in Model)
+                                    {
+
+                                        <h5>Asset Number</h5>
+                                        <p>
+                                            <input type="text" name="AssetNumber" value="@Html.DisplayFor(modelItem => item.AssetID)" class="form-control" disabled="disabled" />
+                                        </p>
+
+                                        <h5>Asset Type</h5>
+                                        <p>
+                                            <input type="text" name="AssetType" value="@Html.DisplayFor(modelItem => item.AssetType)" class="form-control" disabled="disabled" />
+                                        </p>
+
+                                        <h5>Asset Location Details</h5>
+
+                                        <p>
+                                            <label>Asset Location ID</label>
+                                            <input type="text" name="AssetHome" value="@Html.DisplayFor(modelItem => item.AssetHome)" class="form-control" disabled="disabled" />
+                                            <label>Asset Location Head</label>
+                                            <input type="text" name="LocationHead" value="@Html.DisplayFor(modelItem => item.LocationHead)" class="form-control" disabled="disabled" />
+                                            <label>Asset Location Name</label>
+                                            <input type="text" name="LocationName" value="@Html.DisplayFor(modelItem => item.LocationName)" class="form-control" disabled="disabled" />
+                                            <label>Asset Location Post Code</label>
+                                            <input type="text" name="LocationPostCode" value="@Html.DisplayFor(modelItem => item.LocationPostCode)" class="form-control" disabled="disabled" />
+
+                                        </p>
+
+
+                                        <h5>Asset Patient Details</h5>
+
+                                        <p>
+                                            <label>Patient User ID</label>
+                                            <input type="text" name="PatientID" value="@Html.DisplayFor(modelItem => item.PatientID)" class="form-control" disabled="disabled" />
+                                            <label>Patient Forename</label>
+                                            <input type="text" name="Forename" value="@Html.DisplayFor(modelItem => item.Forename)" class="form-control" disabled="disabled" />
+                                            <label>Patient Surname</label>
+                                            <input type="text" name="Surname" value="@Html.DisplayFor(modelItem => item.Surname)" class="form-control" disabled="disabled" />
+                                            <label>Patient Address</label>
+                                            <input type="text" name="Address" value="@Html.DisplayFor(modelItem => item.Address)" class="form-control" disabled="disabled" />
+                                            <label>Patient ContactNo</label>
+                                            <input type="text" name="ContactNo" value="@Html.DisplayFor(modelItem => item.ContactNo)" class="form-control" disabled="disabled" />
+                                            <label>Patient Carer ID</label>
+                                            <input type="text" name="CarerID" value="@Html.DisplayFor(modelItem => item.CarerID)" class="form-control" disabled="disabled" />
+
+                                        </p>
+
+                                        <h5>Patient Carer Details</h5>
+
+                                        <p>
+                                            <label>Patient User ID</label>
+                                            <input type="text" name="CarerID" value="@Html.DisplayFor(modelItem => item.CarerID)" class="form-control" disabled="disabled" />
+
+                                        </p>
+
+                                        <h5>Asset Value Details</h5>
+
+                                        <p>
+                                            <label>Asset Value</label>
+                                            <input type="text" name="AssetValue" value="@Html.DisplayFor(modelItem => item.AssetValue)" class="form-control" disabled="disabled" />
+                                        </p>
+
+                                        <h5>Asset Usability Details</h5>
+
+                                        <p>
+                                            <label>Asset Usable</label>
+                                            <input type="text" name="AssetUsable" value="@Html.DisplayFor(modelItem => item.AssetUsable)" class="form-control" disabled="disabled" />
+                                        </p>
+
+                                    }
+                                }
+                            }
+                        </div>
+
+                        <div class="col-md-6 float-left">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d38780.35263465039!2d-2.1626406495319985!3d52.5918145990568!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487080d43225d7fd%3A0x526da09547380126!2sWolverhampton!5e0!3m2!1sen!2suk!4v1581620559939!5m2!1sen!2suk" width="@{Write("100%");}" height="450" frameborder="0" style="border:0;" allowfullscreen=""></iframe>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <style type="text/css">
+                    #Edit-Asset-btn {
+                        float: right;
+                        margin-top: 10px;
+                    }
+                    .form-asset-select input, select {
+                        margin: 10px;
+                    }
+                </style>
+            </div>
+        </div>
+    </div>
+
+
+}
+else
+{
+
+}
+
